@@ -1,16 +1,17 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+const path = require('path');
 const { dependencies } = require("./package.json");
 
 module.exports = {
   entry: "./src/entry.js",
   mode: "development",
-  devServer: {
-    port: 3000,
-    historyApiFallback: true,
+  output: {
+    filename: '[name].bundle.js',
+    publicPath: "http://localhost:3002/",
   },
-  resolve: {
-    extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
+  devServer: {
+    port: 3002
   },
   module: {
     rules: [
@@ -37,30 +38,16 @@ module.exports = {
       template: "./public/index.html",
     }),
     new ModuleFederationPlugin({
-      name: "App",
+      name: "ReservationApp",
       filename: "remoteEntry.js",
-      exposes:{
-        "./App":"./src/App",
-      },
-      remotes: {
-        UserApp: "UserApp@http://localhost:3001/remoteEntry.js",
-        TicketApp: "TicketApp@http://localhost:3002/remoteEntry.js",
-        ReservationApp: "ReservationApp@http://localhost:3002/remoteEntry.js",
+      exposes: {
+        "./Reservation": "./src/App.js",
       },
       shared: {
         ...dependencies,
-        react: {
-          singleton: true,
-          requiredVersion: dependencies["react"],
-        },
-        "react-dom": {
-          singleton: true,
-          requiredVersion: dependencies["react-dom"],
-        },
-        "react-router-dom": {
-          singleton: true,
-          requiredVersion: dependencies["react-router-dom"],
-        },
+        react: { singleton: true, requiredVersion: dependencies["react"] },
+        "react-dom": { singleton: true, requiredVersion: dependencies["react-dom"] },
+        "react-router-dom": { singleton: true, requiredVersion: dependencies["react-router-dom"] },
       },
     }),
   ],

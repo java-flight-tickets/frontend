@@ -20,8 +20,10 @@ function App() {
       }
     } catch (error) {
       console.error('Failed to fetch tickets:', error);
-      setTickets([]); 
+      setTickets([]);
+    } 
   };
+  
 
   const handleDelete = async (id) => {
     await removeTicket(id);
@@ -40,7 +42,6 @@ function App() {
       <TicketList tickets={tickets} onDelete={handleDelete} />
     </div>
   );
-}
 }
 
 export default App;
